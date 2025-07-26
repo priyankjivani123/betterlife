@@ -88,7 +88,7 @@ class Product extends \Magento\Catalog\Block\Product\AbstractProduct implements 
             4
         )->addColumnCountLayoutDepend('3columns', 3);
 
-                \Magento\Framework\Profiler::start('widgetplus__construct');
+                \Magento\Framework\Profiler::stop('widgetplus__construct');
 
     }
 
@@ -97,35 +97,33 @@ class Product extends \Magento\Catalog\Block\Product\AbstractProduct implements 
      *
      * @return int|bool|null
      */
-    protected function getCacheLifetime()
+     protected function getCacheLifetime()
     {
-                \Magento\Framework\Profiler::start('widgetplus_cache_lifetime');
+        \Magento\Framework\Profiler::start('widgetplus_cache_lifetime');
 
-              $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/custom.log');
-            $logger = new \Zend_Log();
-            $logger->addWriter($writer);
+        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/custom.log');
+        $logger = new \Zend_Log();
+        $logger->addWriter($writer);
 
-            $logger->info('----------------- get daata --------------- ');  
-            $logger->info(print_r($this->hasData('cache_lifetime'),true));          
+        $logger->info('----------------- get data ---------------');
+        $logger->info(print_r($this->hasData('cache_lifetime'), true));
 
         if (!$this->hasData('cache_lifetime')) {
-            return null;
+            $logger->info('Setting default cache lifetime to 86400');
+            \Magento\Framework\Profiler::stop('widgetplus_cache_lifetime');
+            return 86400; // 1 day
         }
 
         $cacheLifetime = $this->getData('cache_lifetime');
 
-        
-            $logger->info('-------cache_lifetime-------- ');  
-            $logger->info(print_r($cacheLifetime,true));     
-        if (false === $cacheLifetime || null === $cacheLifetime) {
-            return $cacheLifetime;
-        }
+        $logger->info('-------cache_lifetime-------- ');
+        $logger->info(print_r($cacheLifetime, true));
 
-        \Magento\Framework\Profiler::start('widgetplus_cache_lifetime');
+        \Magento\Framework\Profiler::stop('widgetplus_cache_lifetime');
 
         return (int)$cacheLifetime;
-
     }
+
 
     /**
      * @return array
@@ -214,7 +212,7 @@ class Product extends \Magento\Catalog\Block\Product\AbstractProduct implements 
         }
 
         $collection = $this->_collectionFactory->create()->getProducts('product', $value, $params, $limit);
-
+Check
                 \Magento\Framework\Profiler::stop('widgetplus_initialize_collection');
 
         return $collection;
